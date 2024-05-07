@@ -9,12 +9,11 @@ import uuid
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads/'
 
-# 确保上传文件夹存在
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
-
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
+    # 确保上传文件夹存在
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
     if request.method == 'POST':
         uploaded_files = request.files.getlist('file')
         pdf_paths = []
