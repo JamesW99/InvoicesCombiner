@@ -1,9 +1,6 @@
 from flask import Flask, request, send_file
-from werkzeug.utils import secure_filename
 import os
-from datetime import datetime
 from PDFCombiner import PDFCombiner  # 正确导入PDFCombiner类
-from werkzeug.utils import secure_filename
 import uuid
 
 app = Flask(__name__)
@@ -41,12 +38,75 @@ def upload_file():
 
     return '''
     <!doctype html>
-    <title>Upload multiple PDF files</title>
-    <h1>Upload multiple PDF files to combine them</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file multiple>
-      <input type=submit value=Upload>
-    </form>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>发票省纸合并</title>
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f4f4f9;
+                margin: 0;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+            form {
+                background: white;
+                padding: 40px;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            h1 {
+                color: #333;
+                text-align: center;
+            }
+            p {
+                color: #666;
+                text-align: center;
+                margin-top: 0;
+                margin-bottom: 20px; /* 添加底部边距 */
+
+            }
+            input[type="file"] {
+                width: 100%;
+                margin: 10px 0;
+                padding: 10px;
+                border: 2px dashed #ccc;
+                display: block;
+            }
+            input[type="submit"] {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                cursor: pointer;
+                width: 100%;
+            }
+            input[type="submit"]:hover {
+                background-color: #45a049;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>这个网站能让您在一张A4纸中塞下三张发票</h1>
+        <p></p>
+        <p>点击说明下面灰色的 Choose File, 选择所有要打印的发票（拖动鼠标或者按住Ctrl）。<br>Select the PDF files you want to combine and upload them.</p>
+        <p>点击 Open 按钮完成选择,再点击合并&下载<br>Click the big green button.</p>
+        <p>合并文件将出现在您的下载文件夹中。<br>The combined file will be ready in download shortly after.</p>
+        <form method="post" enctype="multipart/form-data">
+          <input type="file" name="file" multiple>
+          <input type="submit" value="合并&下载">
+        </form>
+        
+        <h3>Powered by <a href="https://github.com/JamesW99/InvoicesCombine"> Yishan </a></h3>
+    </body>
+    </html>
     '''
 
 
