@@ -63,7 +63,8 @@ class PDFCombiner:
 
 
 # Usage
-file_paths = ["1.pdf", "2.pdf", "3.pdf", "4.pdf"]
-combiner = PDFCombiner(file_paths)
-pdf_path = combiner.process_files()
-print(f"The combined PDF is saved at {pdf_path}")
+if __name__ == '__main__':
+    file_paths = ["1.pdf", "2.pdf", "3.pdf", "4.pdf"]
+    combiner = PDFCombiner(file_paths)
+    pdf_path = combiner.process_files()
+    print(f"The combined PDF is saved at {pdf_path}")

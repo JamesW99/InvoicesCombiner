@@ -1,56 +1,56 @@
-from flask import Flask, request, send_from_directory, render_template_string
+from flask import Flask, request, send_file
+from werkzeug.utils import secure_filename
 import os
-# from PyPDF2 import PdfMerger
+from datetime import datetime
+from PDFCombiner import PDFCombiner  # 正确导入PDFCombiner类
+from werkzeug.utils import secure_filename
+import uuid
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'pdf'}
+app.config['UPLOAD_FOLDER'] = 'uploads/'
 
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+# 确保上传文件夹存在
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def combine(pdf_files):
-    # merger = PdfMerger()
-    # for pdf in pdf_files:
-    #     merger.append(pdf)
-    # combined_path = os.path.join(UPLOAD_FOLDER, 'combined.pdf')
-    # merger.write(combined_path)
-    # merger.close()
-    # return combined_path
-    pass
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        files = request.files.getlist('file')
-        saved_files = []
-        for file in files:
-            if file and allowed_file(file.filename):
-                filename = file.filename
-                filepath = os.path.join(UPLOAD_FOLDER, filename)
-                file.save(filepath)
-                saved_files.append(filepath)
-        if saved_files:
-            combined_path = combine(saved_files)
-            return render_template_string('''
-                File(s) uploaded and combined successfully. <br>
-                <a href="/download/combined.pdf">Download Combined PDF</a>.
-            ''')
+        uploaded_files = request.files.getlist('file')
+        pdf_paths = []
+
+        # 保存上传的PDF文件
+        def secure_filename_with_chinese(filename):
+            # 分割文件名和扩展名
+            file_base, file_extension = os.path.splitext(filename)
+            # 使用 uuid 生成唯一文件名，避免重名问题，同时保留原文件的扩展名
+            return f"{uuid.uuid4()}{file_extension}"
+
+        for file in uploaded_files:
+            if file:
+                filename = secure_filename_with_chinese(file.filename)
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                pdf_paths.append(file_path)
+
+        # 实例化PDFCombiner并调用process_files方法
+        combiner = PDFCombiner(pdf_paths)
+        output_path = combiner.process_files()
+
+        # 提供下载合并后的PDF
+        return send_file(output_path, as_attachment=True)
+
     return '''
     <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new PDF file(s)</h1>
+    <title>Upload multiple PDF files</title>
+    <h1>Upload multiple PDF files to combine them</h1>
     <form method=post enctype=multipart/form-data>
       <input type=file name=file multiple>
       <input type=submit value=Upload>
     </form>
     '''
 
-@app.route('/download/<filename>')
-def download_file(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
+
