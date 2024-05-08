@@ -15,7 +15,7 @@ class PDFCombiner:
         self.right_margin = 200  # Right margin
         if not os.path.exists(self.output_directory):
             os.makedirs(self.output_directory)
-        self.output_path = os.path.join(self.output_directory, f'combined_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf')
+        self.output_path = os.path.join(self.output_directory, f"combined_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf")
         self.file_initialized = False
 
     def process_files(self):
