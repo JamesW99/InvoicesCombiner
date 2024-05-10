@@ -12,7 +12,7 @@ class PDFCombiner:
         self.output_directory = 'combined'
         self.vertical_margin = 100  # Vertical margin to avoid printing issues at the edges
         self.content_height = self.a4_height - 2 * self.vertical_margin  # Adjusted content height after accounting for margins
-        self.right_margin = 200  # Right margin
+        self.right_margin = 500  # Right margin
         if not os.path.exists(self.output_directory):
             os.makedirs(self.output_directory)
         self.output_path = os.path.join(self.output_directory, f"combined_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf")
